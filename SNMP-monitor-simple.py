@@ -1,13 +1,19 @@
 import csv
 import subprocess
 import re
+import logging
+
 #import _thread
+
+log-filename = "SNMP-monitor.log"
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+
 
 def GetPostData(community, target, OID):
     result = subprocess.check_output(["snmpget", "-v", "2c","-c",community,target,OID,"-Ov"])
     result = re.findall("[-+]?\d+[\.]?\d*", result)
     # substring the result
-    return result
+    return result[0]
 
 def PostData (targetInflux, host, target, sensor, value):
     postData = subprocess.check_output(["curl", "-i", "-XPOST","http://"+targetInflux+":8086/write?db=home","--data-binary",host + ",host="+ target +",sensor="+sensor+" value=" + value])
