@@ -1,6 +1,5 @@
 target,community,table,host,sensor,OID
-storage.ldc.int,community,ups_data,APC,battvoltage,1.3.6.1.4.1.6574.4.3.2.1.0
-storage.ldc.int,community,ups_data,APC,battcharge,1.3.6.1.4.1.6574.4.3.1.1.0
-storage.ldc.int,community,ups_data,APC,load,1.3.6.1.4.1.6574.4.2.12.1.0
-storage.ldc.int,community,ups_data,APC,inputvoltage,1.3.6.1.4.1.6574.4.4.1.1.0
-storage.ldc.int,community,ups_data,APC,runtime,1.3.6.1.4.1.6574.4.3.6.1.0
+storage.ldc.int,public,ups_data,APC,battcharge,1.3.6.1.4.1.6574.4.3.1.1.0
+storage.ldc.int,public,ups_data,APC,load,1.3.6.1.4.1.6574.4.2.12.1.0
+storage.ldc.int,public,ups_data,APC,inputvoltage,1.3.6.1.4.1.6574.4.4.1.1.0
+storage.ldc.int,public,ups_data,APC,battruntime,1.3.6.1.4.1.6574.4.3.6.1.0
