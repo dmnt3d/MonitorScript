@@ -1,9 +1,11 @@
 import csv
 import subprocess
+import re
 #import _thread
 
 def GetPostData(community, target, OID):
     result = subprocess.check_output(["snmpget", "-v", "2c","-c",community,target,OID,"-Ov"])
+    result = re.findall("[-+]?\d+[\.]?\d*", result)
     # substring the result
     return result
 
@@ -13,6 +15,7 @@ def PostData (targetInflux, host, target, sensor, value):
 
 def Process(targetInflux,host,target,sensor,community,OID):
     value = GetPostData(community,target,OID)
+    print ("Adding: " + sensor + " with VALUE: " + value)
     PostData(targetInflux,host,sensor,value)
     return
 
