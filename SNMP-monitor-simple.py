@@ -9,14 +9,17 @@ from logging.handlers import RotatingFileHandler
 #import _thread
 
 logFilename = "SNMP-monitor.log"
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+#logging.basicConfig(format='%(asctime)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.DEBUG)
+
+handler = RotatingFileHandler(logFilename, maxBytes=100, backupCount=5)
+formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s")
+handler.setFormatter(formatter)
+handler.setLevel(logging.DEBUG)
 
 logger  = logging.getLogger()
 
-handler = RotatingFileHandler(logFilename, maxBytes=100, backupCount=5)
 logger.addHandler(handler)
 
-logger.debug("Starting Application")
 
 
 def GetPostData(community, target, OID, table):
@@ -36,8 +39,8 @@ def PostData (targetInflux, table, target, sensor, value):
     return
 
 def Process(targetInflux,table,target,sensor,community,OID):
-
     value = GetPostData(community,target,OID,table)
+    logger.debug("Adding: " + sensor + " with VALUE: " + value)
     #print ("Adding: " + sensor + " with VALUE: " + value)
     PostData(targetInflux,table,target,sensor,value)
     return
@@ -47,16 +50,24 @@ def Process(targetInflux,table,target,sensor,community,OID):
 #    return
 
 def importCSV ():
+    logger.debug("Importing the CSV data")
     input_file = csv.DictReader(open("D:\Python\MonitorScript\data.csv"))
     return input_file
 
-def main():
-    influxDB = "dockerhost.ldc.int"
-    logger.debug("Importing CSV Data")
-    csvData = importCSV()
-    for item in csvData:
+def mainLoop (csvData, influxDB):
+     for item in csvData:
         Process(influxDB,item['table'],item['target'],item['sensor'],item['community'],item['OID'])
 
+
+def main():
+    influxDB = "dockerhost.ldc.int"
+    csvData = importCSV()
+    while True:
+        mainLoop(csvData, influxDB)
+        time.sleep(30)
+
+
 if __name__ == "__main__":
+    logger.debug("Starting Application")
     main()
 
