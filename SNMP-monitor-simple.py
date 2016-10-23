@@ -8,6 +8,8 @@ from logging.handlers import RotatingFileHandler
 
 #SET FORMATTING for LOG
 logFilename = "SNMP-monitor.log"
+# logFilename = "/home/admin/Scripts/Python/MonitorScript/log/SNMP-monitor.log"
+
 formatter = logging.Formatter("%(asctime)s[%(levelname)s]: %(message)s")
 handler = RotatingFileHandler(logFilename, maxBytes=104800, backupCount=5)
 #
@@ -36,7 +38,17 @@ def GetPostData(community, target, OID, table):
 
 def PostData (targetInflux, table, target, sensor, value):
     logger.debug("Posting data")
-    postData = subprocess.check_output(["curl", "-i", "-XPOST","http://"+targetInflux+":8086/write?db=home","--data-binary",  table +",host="+ target +",sensor="+sensor+" value=" + value])
+    while True:
+        try:
+            # try posting data
+            postData = subprocess.check_output(["curl", "-i", "-XPOST","http://"+targetInflux+":8086/write?db=home","--data-binary",  table +",host="+ target +",sensor="+sensor+" value=" + value])
+        except subprocess.CalledProcessError as e:
+            logger.debug("FAILED posting with error: "  +  e.output)
+            logger.debug("Retrying after 30 seconds... ")
+            time.sleep(30)
+            continue
+        break
+
     return
 
 def Process(targetInflux,table,target,sensor,community,OID):
@@ -53,6 +65,8 @@ def Process(targetInflux,table,target,sensor,community,OID):
 def importCSV ():
     logger.debug("Importing the CSV data")
     input_file = csv.DictReader(open("D:\Python\MonitorScript\data.csv"))
+#   input_file = csv.DictReader(open("/home/admin/Scripts/Python/MonitorScript/data.csv"))
+
     return input_file
 
 def mainLoop (csvData, influxDB):
