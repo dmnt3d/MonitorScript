@@ -6,19 +6,20 @@ import time
 
 from logging.handlers import RotatingFileHandler
 
-#import _thread
-
+#SET FORMATTING for LOG
 logFilename = "SNMP-monitor.log"
-#logging.basicConfig(format='%(asctime)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.DEBUG)
+formatter = logging.Formatter("%(asctime)s[%(levelname)s]: %(message)s")
+handler = RotatingFileHandler(logFilename, maxBytes=104800, backupCount=5)
+#
 
-handler = RotatingFileHandler(logFilename, maxBytes=100, backupCount=5)
-formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s")
+#set formatting for the handling
 handler.setFormatter(formatter)
-handler.setLevel(logging.DEBUG)
 
+# create Logger
 logger  = logging.getLogger()
-
+logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
+
 
 
 
