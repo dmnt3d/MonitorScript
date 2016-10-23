@@ -35,7 +35,7 @@ def Process(targetInflux,host,target,sensor,community,OID):
 
     value = GetPostData(community,target,OID)
     print ("Adding: " + sensor + " with VALUE: " + value)
-    PostData(targetInflux,host,sensor,value)
+    PostData(targetInflux,host,target,sensor,value)
     return
 
 #def threaded_GetPostData(self, targetInflux):
