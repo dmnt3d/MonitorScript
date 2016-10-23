@@ -19,23 +19,27 @@ logger.addHandler(handler)
 logger.debug("Starting Application")
 
 
-def GetPostData(community, target, OID):
+def GetPostData(community, target, OID, table):
     logger.debug("Getting Post Data via SNMPGet")
     result = subprocess.check_output(["snmpget", "-v", "2c","-c",community,target,OID,"-Ov"])
     result = re.findall("[-+]?\d+[\.]?\d*", result)
     # substring the result
-    return result[0]
+    #CHECK if PAN PORTS or NOT
+    if (table == "pan_ports"):
+        return result[1]
+    else:
+        return result[0]
 
-def PostData (targetInflux, host, target, sensor, value):
+def PostData (targetInflux, table, target, sensor, value):
     logger.debug("Posting data")
-    postData = subprocess.check_output(["curl", "-i", "-XPOST","http://"+targetInflux+":8086/write?db=home","--data-binary",host + ",host="+ target +",sensor="+sensor+" value=" + value])
+    postData = subprocess.check_output(["curl", "-i", "-XPOST","http://"+targetInflux+":8086/write?db=home","--data-binary",  table +",host="+ target +",sensor="+sensor+" value=" + value])
     return
 
-def Process(targetInflux,host,target,sensor,community,OID):
+def Process(targetInflux,table,target,sensor,community,OID):
 
-    value = GetPostData(community,target,OID)
-    print ("Adding: " + sensor + " with VALUE: " + value)
-    PostData(targetInflux,host,target,sensor,value)
+    value = GetPostData(community,target,OID,table)
+    #print ("Adding: " + sensor + " with VALUE: " + value)
+    PostData(targetInflux,table,target,sensor,value)
     return
 
 #def threaded_GetPostData(self, targetInflux):
@@ -51,7 +55,7 @@ def main():
     logger.debug("Importing CSV Data")
     csvData = importCSV()
     for item in csvData:
-        Process(influxDB,item['host'],item['target'],item['sensor'],item['community'],item['OID'])
+        Process(influxDB,item['table'],item['target'],item['sensor'],item['community'],item['OID'])
 
 if __name__ == "__main__":
     main()
