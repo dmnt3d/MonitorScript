@@ -91,6 +91,7 @@ def main():
 
 
 if __name__ == "__main__":
+    time.sleep(60)
     logger.debug("Starting Application")
     main()
 
