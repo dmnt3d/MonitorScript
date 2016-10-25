@@ -41,7 +41,7 @@ def PostData(targetInflux, table, target, sensor, value):
         logger.debug("PostCMD: curl -i -XPOST http://" + targetInflux + ":8086/write?db=home --data-binary '" + table + ",host=" + target + ",sensor=" + sensor + " value=" + value + "'")
         # postData = subprocess.check_output(["curl", "-i", "-XPOST","http://"+targetInflux+":8086/write?db=home","--data-binary",  "'" + table +",host="+ target +",sensor="+sensor+" value=" + value +  "'"])
         data = table + ",host=" + target + ",sensor=" + sensor + " value=" + value
-        response = requests.post("http:///" + targetInflux + ":8086/write?db=home", data)
+        response = requests.post("http://" + targetInflux + ":8086/write?db=home", data)
 
         if (response.status_code == 204):
             logger.debug("Done Posting")
