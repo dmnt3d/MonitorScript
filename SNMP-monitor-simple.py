@@ -3,12 +3,21 @@ import subprocess
 import re
 import logging
 import time
+<<<<<<< HEAD
 import requests
 from logging.handlers import RotatingFileHandler
 
 #SET FORMATTING for LOG
 #logFilename = "SNMP-monitor.log"
 logFilename = "/home/admin/Scripts/Python/MonitorScript/log/SNMP-monitor.log"
+=======
+
+from logging.handlers import RotatingFileHandler
+
+#SET FORMATTING for LOG
+logFilename = "SNMP-monitor.log"
+# logFilename = "/home/admin/Scripts/Python/MonitorScript/log/SNMP-monitor.log"
+>>>>>>> 065e186a442c9f36b4fc165c03fb53aa580a749d
 
 formatter = logging.Formatter("%(asctime)s[%(levelname)s]: %(message)s")
 handler = RotatingFileHandler(logFilename, maxBytes=104800, backupCount=5)
@@ -37,6 +46,7 @@ def GetPostData(community, target, OID, table):
         return result[0]
 
 def PostData (targetInflux, table, target, sensor, value):
+<<<<<<< HEAD
     logger.debug("Posting data for : [" +target+"]")
     while True:
         try:
@@ -56,11 +66,29 @@ def PostData (targetInflux, table, target, sensor, value):
 #        break
 
     logger.debug ("Continue execution")
+=======
+    logger.debug("Posting data")
+    while True:
+        try:
+            # try posting data
+            postData = subprocess.check_output(["curl", "-i", "-XPOST","http://"+targetInflux+":8086/write?db=home","--data-binary",  table +",host="+ target +",sensor="+sensor+" value=" + value])
+        except subprocess.CalledProcessError as e:
+            logger.debug("FAILED posting with error: "  +  e.output)
+            logger.debug("Retrying after 30 seconds... ")
+            time.sleep(30)
+            continue
+        break
+
+>>>>>>> 065e186a442c9f36b4fc165c03fb53aa580a749d
     return
 
 def Process(targetInflux,table,target,sensor,community,OID):
     value = GetPostData(community,target,OID,table)
+<<<<<<< HEAD
     logger.debug("Adding: [" + sensor + "] with VALUE: [" + value + "]")
+=======
+    logger.debug("Adding: " + sensor + " with VALUE: " + value)
+>>>>>>> 065e186a442c9f36b4fc165c03fb53aa580a749d
     #print ("Adding: " + sensor + " with VALUE: " + value)
     PostData(targetInflux,table,target,sensor,value)
     return
@@ -71,8 +99,13 @@ def Process(targetInflux,table,target,sensor,community,OID):
 
 def importCSV ():
     logger.debug("Importing the CSV data")
+<<<<<<< HEAD
 #    input_file = csv.DictReader(open("D:\Python\MonitorScript\data.csv"))
     input_file = csv.DictReader(open("/home/admin/Scripts/Python/MonitorScript/data.csv"))
+=======
+    input_file = csv.DictReader(open("D:\Python\MonitorScript\data.csv"))
+#   input_file = csv.DictReader(open("/home/admin/Scripts/Python/MonitorScript/data.csv"))
+>>>>>>> 065e186a442c9f36b4fc165c03fb53aa580a749d
 
     return input_file
 
@@ -83,6 +116,7 @@ def mainLoop (csvData, influxDB):
 
 def main():
     influxDB = "dockerhost.ldc.int"
+<<<<<<< HEAD
     #csvData = importCSV()
     while True:
 	csvData = importCSV()
@@ -92,6 +126,13 @@ def main():
 	logger.debug ("Executing next Cycle")
 	
 	
+=======
+    csvData = importCSV()
+    while True:
+        mainLoop(csvData, influxDB)
+        time.sleep(30)
+
+>>>>>>> 065e186a442c9f36b4fc165c03fb53aa580a749d
 
 if __name__ == "__main__":
     logger.debug("Starting Application")
