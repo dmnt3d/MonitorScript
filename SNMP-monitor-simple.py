@@ -29,7 +29,7 @@ def GetPostData(community, target, OID, table):
     result = re.findall("[-+]?\d+[\.]?\d*", result)
     # substring the result
     #CHECK if PAN PORTS or NOT
-    if (table == "pan_ports"):
+    if ("ports" in table):
         return result[1]
     else:
         return result[0]
